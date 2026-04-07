@@ -1,0 +1,13 @@
+[
+  {
+    "name": "Varicella (Chickenpox)",
+    "cause": "Highly contagious infection caused by the varicella-zoster virus (VZV).",
+    "treatment": "Calamine lotion, antihistamines, antiviral drugs for severe cases."
+  },
+  {
+    "name": "Influenza (The Flu)",
+    "cause": "Viral infection attacking the respiratory system.",
+    "treatment": "Antiviral drugs, rest, fluid intake, annual vaccination."
+  }
+  // ... 9,998 more records go here
+]

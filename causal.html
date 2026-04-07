@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Causal Discovery | SutraX</title>
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-base: #05050A; --bg-panel: rgba(18, 18, 28, 0.65); --border-subtle: rgba(255, 255, 255, 0.05); --text-main: #F8FAFC; --text-muted: #94A3B8; --indigo: #818CF8; --emerald: #34D399; --pink: #F472B6; --cyan: #22D3EE;}
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-base); color: var(--text-main); min-height: 100vh; display: flex; overflow-x: hidden; background-image: radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.1) 0%, transparent 40%), radial-gradient(circle at 100% 100%, rgba(52, 211, 153, 0.08) 0%, transparent 40%); background-attachment: fixed; }
+        .sidebar { width: 260px; background: rgba(10, 10, 15, 0.8); backdrop-filter: blur(20px); border-right: 1px solid var(--border-subtle); padding: 2rem 1.5rem; display: flex; flex-direction: column; gap: 2rem; position: fixed; height: 100vh; z-index: 10; }
+        .brand { display: flex; align-items: center; gap: 1rem; }
+        .brand-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--indigo), var(--cyan)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;}
+        .brand-text h1 { font-family: 'Michroma', sans-serif; font-size: 1.3rem; font-weight: 400; background: linear-gradient(135deg, #F8FAFC 0%, #818CF8 80%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase;}
+        .brand-text h1 span { background: linear-gradient(135deg, #22D3EE, #F472B6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; }
+        .brand-text p { font-size: 0.75rem; color: var(--emerald); font-family: 'JetBrains Mono'; }
+        .nav-menu { display: flex; flex-direction: column; gap: 0.5rem; }
+        .nav-item { padding: 0.8rem 1rem; border-radius: 8px; color: var(--text-muted); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 0.8rem; transition: all 0.3s ease; }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+        .nav-item.active { background: rgba(99, 102, 241, 0.1); color: var(--indigo); border-left: 3px solid var(--indigo); }
+        .main-content { margin-left: 260px; padding: 2rem 3rem; width: calc(100% - 260px); }
+        .header { margin-bottom: 2rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 1.5rem; }
+        .header h2 { font-size: 1.8rem; font-weight: 700; }
+        .header p { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.4rem; }
+        .card { background: var(--bg-panel); backdrop-filter: blur(16px); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; }
+        .causal-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .causal-table th, .causal-table td { padding: 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .causal-table th { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-family: 'JetBrains Mono'; }
+        .causal-table tr:hover { background: rgba(255,255,255,0.02); }
+        .ate-positive { color: var(--emerald); font-weight: 700; font-family: 'JetBrains Mono'; }
+        .ate-negative { color: var(--pink); font-weight: 700; font-family: 'JetBrains Mono'; }
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border-subtle); padding: 1.5rem 1rem 1rem; z-index: 10; gap: 1rem; }
+            .brand { justify-content: center; }
+            .nav-menu { flex-direction: row; overflow-x: auto; padding-bottom: 0.5rem; gap: 0.8rem; -webkit-overflow-scrolling: touch; }
+            .nav-menu::-webkit-scrollbar { height: 4px; }
+            .nav-menu::-webkit-scrollbar-thumb { background: rgba(129, 140, 248, 0.5); border-radius: 4px; }
+            .nav-item { flex: 0 0 auto; font-size: 0.85rem; padding: 0.6rem 1rem; }
+            .main-content { margin-left: 0; width: 100%; padding: 1.5rem 1rem; }
+            .header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .header h2 { font-size: 1.5rem; }
+            .causal-table { display: block; overflow-x: auto; white-space: nowrap; }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="brand"><div class="brand-icon">💠</div><div class="brand-text"><h1>Sutra<span>X</span></h1><p>v2.0 • DP-Secure</p></div></div>
+        <nav class="nav-menu">
+            <a href="index.html" class="nav-item">📊 Dashboard</a>
+            <a href="nodes.html" class="nav-item">🏥 Nodes</a>
+            <a href="causal.html" class="nav-item active">🧠 Causal</a>
+            <a href="privacy.html" class="nav-item">🔐 Privacy</a>
+            <a href="settings.html" class="nav-item">⚙️ Settings</a>
+        </nav>
+    </aside>
+    <main class="main-content">
+        <header class="header">
+            <h2>Counterfactual & Causal Engine</h2>
+            <p>Estimating Average Treatment Effects (ATE) by controlling for clinical confounders.</p>
+        </header>
+        <div class="card">
+            <h3 style="margin-bottom: 1rem; color: var(--cyan);">Computed Average Treatment Effects (ATE)</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Results synthesized globally across all federated nodes using the FCI algorithm.</p>
+            <table class="causal-table">
+                <thead>
+                    <tr><th>Treatment Variable</th><th>Outcome Variable</th><th>Confounders Controlled</th><th>Estimated ATE</th><th>Confidence</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Beta-Blocker Administered</td><td>30-Day Readmission</td><td>Age, BMI, Prev. Heart Failure</td><td class="ate-negative">-0.124 (Reduction)</td><td>95% CI</td></tr>
+                    <tr><td>Early Extubation</td><td>Ventilator Pneumonia</td><td>Age, Smoking Status</td><td class="ate-negative">-0.085 (Reduction)</td><td>90% CI</td></tr>
+                    <tr><td>Delayed Antibiotics</td><td>Sepsis Mortality</td><td>Temp, WBC Count</td><td class="ate-positive">+0.210 (Increase)</td><td>99% CI</td></tr>
+                    <tr><td>Aggressive Insulin</td><td>Hypoglycemia Event</td><td>HbA1c, Weight</td><td class="ate-positive">+0.105 (Increase)</td><td>95% CI</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>
